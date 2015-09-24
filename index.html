@@ -1,6 +1,7 @@
 <html>
 	<head>
 		<title>A simple queue for calling functions asynchronously</title>
+		<script src="lib/assure.js"></script>		
 		<script src="src/timeoutqueue.js"></script>
 		<!-- Using polyfill for chrome-->
 		<script src="lib/showModalDialog.js"></script>		
@@ -30,6 +31,8 @@
 				//tq.add(t4);
 				tq.execute(timeout, execScope, function(){
 					console.log('all functions have completed executing.');
+				}).done(function(){
+					console.log('Yes completed!!!');
 				});
 				
 				/*
@@ -58,10 +61,12 @@
 			}
 			
 			function t2(){
+				var me = this;
 				console.log('t2');
+				me.a();
 				window.showModalDialog("testpage.html","dialog name",         "dialogWidth:400px;dialogHeight:300px");
 				console.log('t2 completed');
-				this.a();
+				
 			}
 			
 			function t3(){

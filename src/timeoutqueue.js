@@ -1,4 +1,5 @@
 var timeoutQueue = (function(){
+	var promise;
 	var tq = function(synchronous){
 		this.fnQueue = {
 			fnDef : []
@@ -26,6 +27,7 @@ var timeoutQueue = (function(){
 	}
 	tqproto.execute = function(timeout, scope, fnCallback){		
 		var me = this;
+		promise = new assure();
 		if(!this.synchronous){
 			var fDef, fnDef = me.fnQueue.fnDef;
 			if( fnDef && fnDef.length > 0){
@@ -51,6 +53,7 @@ var timeoutQueue = (function(){
 						if(fnCallback){
 							fnCallback.call(scope, fnExecCmpl);
 						}
+						promise.resolve(fnExecCmpl);
 					}
 				}
 				while(fnDef.length > 0){
@@ -79,6 +82,8 @@ var timeoutQueue = (function(){
 		else{
 			me.executeSync(timeout, scope);
 		}
+		
+		return promise;
 	}
 	tqproto.executeSync = function(timeout, scope){
 		if(this.fnQueue && this.fnQueue.length > 0){
