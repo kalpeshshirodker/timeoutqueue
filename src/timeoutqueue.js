@@ -6,11 +6,14 @@ var timeoutQueue = (function(){
 	
 	var tqproto = tq.prototype;
 	tqproto.add = function(fn){
-		if(typeof fn === 'function'){
-			this.fnQueue.push(fn);
-		}
-		else{
-			throw "Invalid object: Function expected";
+		fn =  (fn instanceof Array) ? fn : [fn];
+		for(var i = 0; i < fn.length; i++){			
+			if(typeof fn[i] === 'function'){
+				this.fnQueue.push(fn[i]);
+			}
+			else{
+				throw "Invalid object: Function expected";
+			}
 		}
 	}
 	tqproto.execute = function(timeout, scope, fnCallback){		
