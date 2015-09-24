@@ -1,7 +1,9 @@
 <html>
 	<head>
 		<title>A simple queue for calling functions asynchronously</title>
-		<script src="src/timeoutqueue.js"></script>		
+		<script src="src/timeoutqueue.js"></script>
+		<!-- Using polyfill for chrome-->
+		<script src="lib/showModalDialog.js"></script>		
 		<script>
 			function testQueue(){
 				var execScope = {
@@ -20,7 +22,9 @@
 				tq.add(t2);
 				tq.add(t3);
 				tq.add(t4);
-				tq.executeSync(timeout, execScope);
+				tq.execute(timeout, execScope, function(){
+					console.log('all functions have completed executing.');
+				});
 				
 				/*
 				setTimeout(t1, timeout);
@@ -47,6 +51,8 @@
 			
 			function t2(){
 				console.log('t2');
+				window.showModalDialog("testpage.html","dialog name",         "dialogWidth:400px;dialogHeight:300px");
+				console.log('t2 completed');
 			}
 			
 			function t3(){
