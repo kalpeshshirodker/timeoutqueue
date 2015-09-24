@@ -31,10 +31,14 @@
 				//tq.add(t4);
 				tq.execute(timeout, execScope, function(){
 					console.log('all functions have completed executing.');
-				}).done(function(){
-					console.log('Yes completed!!!');
 				});
 				
+				tq.add(t3);
+				
+				//using promises
+				tq.execute(timeout, execScope).done(function(){
+					console.log('Yes completed!!!');
+				});
 				/*
 				setTimeout(t1, timeout);
 				setTimeout(t3, timeout);
