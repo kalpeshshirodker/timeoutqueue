@@ -8,18 +8,24 @@
 			function testQueue(){
 				var execScope = {
 					a : function(){
-						console.log('g');
+						console.log('execScope');
 					}
 				}
 				var f1execScope = {
-					b : function(){
-						console.log('g');
+					a : function(){
+						console.log('f1execScope');
+					}
+				}
+				
+				var f2execScope = {
+					a : function(){
+						console.log('f2execScope');
 					}
 				}
 				var timeout = 10;
 				var tq = new timeoutQueue();
 				tq.add(t1.bind(f1execScope));
-				tq.add(t2);
+				tq.add(t2, f2execScope);
 				tq.add([t3, t4]);
 				//tq.add(t4);
 				tq.execute(timeout, execScope, function(){
@@ -47,20 +53,25 @@
 				}
 				oReq.send();
 				console.log('t1 complete.');
+				
+				this.a();
 			}
 			
 			function t2(){
 				console.log('t2');
 				window.showModalDialog("testpage.html","dialog name",         "dialogWidth:400px;dialogHeight:300px");
 				console.log('t2 completed');
+				this.a();
 			}
 			
 			function t3(){
 				console.log('t3');
+				this.a();
 			}
 			
 			function t4(){
 				console.log('t4');
+				this.a();
 			}
 			
 			function syncFunc(){
