@@ -1,0 +1,3 @@
+jsondata : {
+	countries : ['India', 'US', 'Germany', 'Great Britain', 'France', 'Switzerland']
+}

@@ -1,0 +1,68 @@
+<html>
+	<head>
+		<title>A simple queue for calling functions asynchronously</title>
+		<script src="src/timeoutqueue.js"></script>		
+		<script>
+			function testQueue(){
+				var execScope = {
+					a : function(){
+						console.log('g');
+					}
+				}
+				var f1execScope = {
+					b : function(){
+						console.log('g');
+					}
+				}
+				var timeout = 10;
+				var tq = new timeoutQueue();
+				tq.add(t1.bind(f1execScope));
+				tq.add(t2);
+				tq.add(t3);
+				tq.add(t4);
+				tq.executeSync(timeout, execScope);
+				
+				/*
+				setTimeout(t1, timeout);
+				setTimeout(t3, timeout);
+				setTimeout(t2, timeout);
+				setTimeout(t4, timeout);*/
+				
+				syncFunc();
+			}
+			
+			function t1(){
+				console.log('t1');
+				var oReq = new XMLHttpRequest();
+				oReq.open("GET", "https://developer.mozilla.org/en/docs/Web/API/XMLHttpRequest/Using_XMLHttpRequest", false);
+				
+				oReq.onreadystatechange = function(){
+					if (oReq.readyState==4 && oReq.status==200){
+						console.log('File downloaded');
+					}
+				}
+				oReq.send();
+				console.log('t1 complete.');
+			}
+			
+			function t2(){
+				console.log('t2');
+			}
+			
+			function t3(){
+				console.log('t3');
+			}
+			
+			function t4(){
+				console.log('t4');
+			}
+			
+			function syncFunc(){
+				console.log('syncFunc');
+			}
+		</script>
+	</head>
+	<body onload="testQueue()">
+	
+	</body>
+</html>
