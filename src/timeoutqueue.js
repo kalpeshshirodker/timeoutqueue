@@ -1,9 +1,8 @@
 var timeoutQueue = (function(){
-	var tq = function(synchronous){
+	var tq = function(){
 		this.fnQueue = {
 			fnDef : []
 		};
-		this.synchronous = synchronous || false;
 	}
 	
 	var tqproto = tq.prototype;
@@ -26,67 +25,49 @@ var timeoutQueue = (function(){
 	}
 	tqproto.execute = function(timeout, scope, fnCallback){		
 		var me = this;
-		if(!this.synchronous){
-			var fDef, fnDef = me.fnQueue.fnDef;
-			if( fnDef && fnDef.length > 0){
-				var fn;
-				scope = scope || me;
-				
-				var fnCnt = fnDef.length;
-				var fnExecCmpl = {
-					success : 0,
-					fail : 0
-				};
-				
-				var cb = function(isSuccess){
-					if(isSuccess){
-						fnExecCmpl.success++;
-					}
-					else{
-						fnExecCmpl.fail++;
-					}
-					console.log(fnExecCmpl);
-					if(fnCnt === (fnExecCmpl.success + fnExecCmpl.fail)){
-						//all functions have executed
-						if(fnCallback){
-							fnCallback.call(scope, fnExecCmpl);
-						}
+		var fDef, fnDef = me.fnQueue.fnDef;
+		if( fnDef && fnDef.length > 0){
+			var fn;
+			scope = scope || me;
+			
+			var fnCnt = fnDef.length;
+			var fnExecCmpl = {
+				success : 0,
+				fail : 0
+			};
+			
+			var cb = function(isSuccess){
+				if(isSuccess){
+					fnExecCmpl.success++;
+				}
+				else{
+					fnExecCmpl.fail++;
+				}
+				console.log(fnExecCmpl);
+				if(fnCnt === (fnExecCmpl.success + fnExecCmpl.fail)){
+					//all functions have executed
+					if(fnCallback){
+						fnCallback.call(scope, fnExecCmpl);
 					}
 				}
-				while(fnDef.length > 0){
-					fDef = fnDef.shift();
-					fn = fDef.fn;
-					scope = fDef.scope || scope;
-					//setTimeout(fn.bind(scope), timeout);
-					(function(fn, scope){
-						setTimeout(function(){
-							try{
-								fn.call(scope);
-								cb(true);
-							}
-							catch(e){
-								cb(false);
-								throw e;
-							}
-						}, timeout);
-					})(fn, scope);
-				}	
 			}
-			else{
-				throw "There are no functions to execute";
-			}
-		}
-		else{
-			me.executeSync(timeout, scope);
-		}
-	}
-	tqproto.executeSync = function(timeout, scope){
-		if(this.fnQueue && this.fnQueue.length > 0){
-			var fn;
-			scope = scope || this;
-			while(this.fnQueue.length > 0){
-				fn = this.fnQueue.shift();
-				setTimeout(fn.bind(scope), timeout);
+			while(fnDef.length > 0){
+				fDef = fnDef.shift();
+				fn = fDef.fn;
+				scope = fDef.scope || scope;
+				//setTimeout(fn.bind(scope), timeout);
+				(function(fn, scope){
+					setTimeout(function(){
+						try{
+							fn.call(scope);
+							cb(true);
+						}
+						catch(e){
+							cb(false);
+							throw e;
+						}
+					}, timeout);
+				})(fn, scope);
 			}	
 		}
 		else{
