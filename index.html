@@ -25,8 +25,8 @@
 				var timeout = 10;
 				var tq = new timeoutQueue();
 				tq.add(t1.bind(f1execScope));
-				tq.add(t2, f2execScope);
-				tq.add([t3, t4]);
+				tq.add(t2, f2execScope, 10000);
+				tq.add([t3, t4], undefined, 4000);
 				//tq.add(t4);
 				tq.execute(timeout, execScope, function(){
 					console.log('all functions have completed executing.');

@@ -1,20 +1,20 @@
 var timeoutQueue = (function(){
 	var tq = function(){
-		this.fnQueue = {
+		this.fnQueue =   {
 			fnDef : []
 		};
 	}
 	
 	var tqproto = tq.prototype;
-	tqproto.add = function(fn, scope){		
+	tqproto.add = function(fn, scope, timeout/*, params*/){		
 		fn =  (fn instanceof Array) ? fn : [fn];
 		var fnDef = {};
 		for(var i = 0; i < fn.length; i++){			
 			if(typeof fn[i] === 'function'){
-				//this.fnQueue.push(fn[i]);
 				fnDef = {
 					fn : fn[i],
-					scope : scope
+					scope : scope,
+					timeout : timeout
 				}
 				this.fnQueue.fnDef.push(fnDef);
 			}
@@ -25,6 +25,7 @@ var timeoutQueue = (function(){
 	}
 	tqproto.execute = function(timeout, scope, fnCallback){		
 		var me = this;
+		var scope = scope || me;  
 		var fDef, fnDef = me.fnQueue.fnDef;
 		if( fnDef && fnDef.length > 0){
 			var fn;
@@ -51,14 +52,21 @@ var timeoutQueue = (function(){
 					}
 				}
 			}
+			
+			var exScope, exTimeout;
 			while(fnDef.length > 0){
+				exScope = scope;
+				exTimeout = timeout;
+			
 				fDef = fnDef.shift();
 				fn = fDef.fn;
-				scope = fDef.scope || scope;
-				//setTimeout(fn.bind(scope), timeout);
-				(function(fn, scope){
+				exScope = fDef.scope || scope;
+				exTimeout = fDef.timeout || timeout;
+				
+				(function(fn, scope, timeout){
 					setTimeout(function(){
 						try{
+						console.log('timeout :' +  timeout);
 							fn.call(scope);
 							cb(true);
 						}
@@ -67,7 +75,7 @@ var timeoutQueue = (function(){
 							throw e;
 						}
 					}, timeout);
-				})(fn, scope);
+				})(fn, exScope, exTimeout);
 			}	
 		}
 		else{
