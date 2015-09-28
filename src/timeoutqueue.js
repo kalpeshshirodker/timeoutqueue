@@ -8,10 +8,10 @@ var timeoutQueue = (function(){
 	}
 	
 	var tqproto = tq.prototype;
-	tqproto.add = function(fn, scope){		
+	tqproto.add = function(fn, scope){
 		fn =  (fn instanceof Array) ? fn : [fn];
 		var fnDef = {};
-		for(var i = 0; i < fn.length; i++){			
+		for(var i = 0; i < fn.length; i++){
 			if(typeof fn[i] === 'function'){
 				//this.fnQueue.push(fn[i]);
 				fnDef = {
@@ -73,7 +73,7 @@ var timeoutQueue = (function(){
 							}
 						}, timeout);
 					})(fn, scope);
-				}	
+				}
 			}
 			else{
 				throw "There are no functions to execute";
@@ -86,18 +86,14 @@ var timeoutQueue = (function(){
 		return promise;
 	}
 	tqproto.executeSync = function(timeout, scope){
-		if(this.fnQueue && this.fnQueue.length > 0){
-			var fn;
-			scope = scope || this;
-			while(this.fnQueue.length > 0){
-				fn = this.fnQueue.shift();
-				setTimeout(fn.bind(scope), timeout);
-			}	
-		}
-		else{
-			throw "There are no functions to execute";
-		}
+		//call the functions in synchronous order
+		//assume timeout = 10ms
+		//e.g 
+		//call f1 after 10ms
+		//wait for f1 to finish
+		//call f2 after 10ms
+		//wait for f2 to finish
+		//...
 	}
-	
 	return tq;
 })();
