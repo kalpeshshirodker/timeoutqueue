@@ -1,6 +1,7 @@
 <html>
 	<head>
 		<title>A simple queue for calling functions asynchronously</title>
+		<script src="lib/assure.js"></script>		
 		<script src="src/timeoutqueue.js"></script>
 		<!-- Using polyfill for chrome-->
 		<script src="lib/showModalDialog.js"></script>		
@@ -25,13 +26,19 @@
 				var timeout = 10;
 				var tq = new timeoutQueue();
 				tq.add(t1.bind(f1execScope));
-				tq.add(t2, f2execScope, undefined, 'fre', 10);
-				tq.add([t3, t4], undefined, 4000);
+				tq.add(t2, f2execScope);
+				tq.add([t3, t4]);
 				//tq.add(t4);
 				tq.execute(timeout, execScope, function(){
 					console.log('all functions have completed executing.');
 				});
 				
+				tq.add(t3);
+				
+				//using promises
+				tq.execute(timeout, execScope).done(function(){
+					console.log('Yes completed!!!');
+				});
 				/*
 				setTimeout(t1, timeout);
 				setTimeout(t3, timeout);
@@ -57,11 +64,13 @@
 				this.a();
 			}
 			
-			function t2(name, age){
+			function t2(){
+				var me = this;
 				console.log('t2');
+				me.a();
 				window.showModalDialog("testpage.html","dialog name",         "dialogWidth:400px;dialogHeight:300px");
 				console.log('t2 completed');
-				this.a();
+				
 			}
 			
 			function t3(){
